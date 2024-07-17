@@ -22,6 +22,9 @@
 						if(status=200){
 							$("#rtnMessage")[0].innerText = "已喚醒";                   
 						}                    
+					},
+					error: function (xhr, status, error) {
+						alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
 					}
 				}).fail(function($xhr) {  
 					console.log($xhr);
