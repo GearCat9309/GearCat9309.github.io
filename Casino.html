@@ -43,10 +43,10 @@
 					$("#rtnMessage")[0].innerText = " 登錄成功";
 					$("#logArea").hide();
 					$("#userProfile").show();
-					$("#id")[0].innerText = json[1];
-					$("#token")[0].innerText = json[2];
+					$("#id")[0].value = json[1];
+					$("#token")[0].value = json[2];
 					$("#name")[0].innerText = json[3];
-					$("#count")[0].innerText = "0";
+					$("#count")[0].value = "0";
 					//讀取現金
 					function callBack2(json){
 						$("#money")[0].innerText = json[1];
@@ -82,14 +82,14 @@
 				if(num == 10)
 				{
 					function callBack(json){
-						$("#count")[0].innerText = "0";
-						$("#token")[0].innerText = json[1];
+						$("#count")[0].value = "0";
+						$("#token")[0].value = json[1];
 					}
 					var parameter = "TokenRenewal?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value
 					azureAjax(parameter,callBack);
 				}
 				else
-					$("#count")[0].innerText = num+1;
+					$("#count")[0].value = num+1;
 			}
 		</script>
 	</head>
