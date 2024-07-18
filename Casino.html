@@ -36,12 +36,10 @@
 				function callBack(json){
 					$("#rtnMessage")[0].innerText = "已喚醒";
 				}
-				var json = azureAjax("WakeUp",callBack);
+				azureAjax("WakeUp",callBack);
 			}
 			function login(){
-				var json = azureAjax("Login?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value);
-				if(json != null)
-				{
+				function callBack1(json){
 					$("#rtnMessage")[0].innerText = " 登錄成功";
 					$("#logArea").hide();
 					$("#userProfile").Show();
@@ -50,41 +48,46 @@
 					$("#name")[0].innerText = json[3];
 					$("#count")[0].innerText = "0";
 				}
+				var parameter = "Login?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value;
+				azureAjax(parameter,callBack1);
+				
 				//讀取現金
-				var json = azureAjax("CasinoUserData?ID="+$("#account")[0].value+"&Token="+$("#token")[0].value);
-				if(json != null)
+				function callBack2(json){
 					$("#money")[0].innerText = json[1];
+				}
+				parameter = "CasinoUserData?ID="+$("#account")[0].value+"&Token="+$("#token")[0].value
+				azureAjax(parameter,callBack2);
 			}
 			function register(){
-				var json = azureAjax("Register?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value+"&Name="+$("#registerName")[0].value);
-				if(json != null)
-				{
+				function callBack(json){
 					$("#rtnMessage")[0].innerText = json[1];
 				}
+				var parameter="Register?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value+"&Name="+$("#registerName")[0].value;
+				azureAjax(parameter,callBack);
 			}
 			function Betting(betType,betDetail){
 				checkToken();
+				function callBack(json){
+					$("#rtnMessage")[0].innerText = json[1];
+					$("#money")[0].innerText = Number($("#money")[0].innerText)+Number(json[2]);
+				}
 				var id=$("#id")[0].value;
 				var token=$("#token")[0].value;
 				var game="賭大小";
 				var betAmount = $("#betAmount")[0].value;
-				var json = azureAjax("Betting?ID="+id+"&Token="+token+"&Game="+game+"&BetType="+betType+"&betDetail="+betDetail+"&betAmount="+betAmount);
-				if(json != null)
-				{
-					$("#rtnMessage")[0].innerText = json[1];
-					$("#money")[0].innerText = Number($("#money")[0].innerText)+Number(json[2]);
-				}
+				var parameter = "Betting?ID="+id+"&Token="+token+"&Game="+game+"&BetType="+betType+"&betDetail="+betDetail+"&betAmount="+betAmount;
+				azureAjax(parameter,callBack);
 			}
 			function checkToken(){
 				var num = Number($("#count")[0].innerText);
 				if(num == 10)
 				{
-					var json = azureAjax("TokenRenewal?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value);
-					if(json != null)
-					{
+					function callBack(json){
 						$("#count")[0].innerText = "0";
 						$("#token")[0].innerText = json[1];
 					}
+					var parameter = "TokenRenewal?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value
+					azureAjax(parameter,callBack);
 				}
 				else
 					$("#count")[0].innerText = num+1;
