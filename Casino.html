@@ -47,16 +47,15 @@
 					$("#token")[0].innerText = json[2];
 					$("#name")[0].innerText = json[3];
 					$("#count")[0].innerText = "0";
+					//讀取現金
+					function callBack2(json){
+						$("#money")[0].innerText = json[1];
+					}
+					parameter = "CasinoUserData?ID="+$("#account")[0].value+"&Token="+$("#token")[0].value
+					azureAjax(parameter,callBack2);
 				}
 				var parameter = "Login?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value;
 				azureAjax(parameter,callBack1);
-				
-				//讀取現金
-				function callBack2(json){
-					$("#money")[0].innerText = json[1];
-				}
-				parameter = "CasinoUserData?ID="+$("#account")[0].value+"&Token="+$("#token")[0].value
-				azureAjax(parameter,callBack2);
 			}
 			function register(){
 				function callBack(json){
