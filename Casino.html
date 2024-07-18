@@ -18,7 +18,7 @@
 					dataType: 'json',
 					type: "GET",
 					success: function(result){
-						var json = $.parseJSON(result);
+						var json = result;
 						if(json[0] == "Err")
 						{
 							$("#rtnMessage")[0].innerText = json[1];
