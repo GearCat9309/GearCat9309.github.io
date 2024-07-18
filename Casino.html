@@ -33,7 +33,7 @@
 			}
 			function wakeUp(){
 				$("#rtnMessage")[0].innerText = "喚醒中，請稍候";
-				var callBack = new function(json){
+				function callBack(json){
 					$("#rtnMessage")[0].innerText = "已喚醒";
 				}
 				var json = azureAjax("WakeUp",callBack);
