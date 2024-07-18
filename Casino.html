@@ -4,51 +4,98 @@
 		<meta charset="UTF-8">
 		<!-- 使用後在手機上的大小比較正確 -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>賭大小</title>
+		<title>賭場</title>
 		<!--引用jQuery -->
 		<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 		<!--引用Bootstrap-->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 		<script>
-			var azureUrl="https://onlinegame20240626204926.azurewebsites.net/api/";
-			function wakeUp(){
-				$("#rtnMessage")[0].innerText = "睡眠中，請稍候";
+			function azureAjax(func){
+				var azureUrl="https://onlinegame20240626204926.azurewebsites.net/api/";
 				$.ajax({
-					url: azureUrl+"WakeUp" ,					
+					url: azureUrl+func ,					
 					dataType: 'json',
 					type: "GET",
 					success: function(result){
-						var json = $.parseJSON(data);
-						alert(json.html);
-						$("#rtnMessage")[0].innerText = "已喚醒";
+						return $.parseJSON(data);
 					},
 					error: function (xhr, status, error) {
-						alert("錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
+						alert("ajax連線錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
 					}
-				}).fail(function($xhr) {  
-					console.log($xhr);
 				});
 			}
+			function wakeUp(){
+				$("#rtnMessage")[0].innerText = "喚醒中，請稍候";
+				var json = azureAjax("WakeUp");
+				if(json != null)
+					$("#rtnMessage")[0].innerText = "已喚醒";
+			}
 			function login(){
+				var json = azureAjax("Login?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value);
+				if(json != null)
+				{
+					$("#rtnMessage")[0].innerText = " 登錄成功";
+					$("#logArea").hide();
+					$("#id")[0].innerText = json[1];
+					$("#token")[0].innerText = json[2];
+					$("#count")[0].innerText = "0";
+				}
+			}
+			function register(){
+				var json = azureAjax("Register?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value);
+				if(json != null)
+				{
+					$("#rtnMessage")[0].innerText = " 登錄成功";
+					$("#logArea").hide();
+					$("#token")[0].innerText = json[1];
+					$("#count")[0].innerText = "0";
+				}
+			}
+			function Betting(betType,betDetail){
+				checkToken();
+				var id=$("#id")[0].value;
+				var token=$("#token")[0].value;
+				var game="賭大小";
+				var betAmount = $("#betAmount")[0].value;
+				var json = azureAjax("Betting?ID="+id+"&Token="+token+"&Game="+game+"&BetType="+betType+"&betDetail="+betDetail+"&betAmount="+betAmount);
+				if(json != null)
+				{
+					$("#rtnMessage")[0].innerText = " 登錄成功";
+					$("#logArea").hide();
+					$("#token")[0].innerText = json[1];
+					$("#count")[0].innerText = "0";
+				}
 				$.ajax({
 					url: azureUrl+"Login?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value ,					
 					dataType: 'json',
 					type: "GET",
 					success: function(result){
-						if(status=200){
-						console.log(result)                           
-						}                    
+						var json = $.parseJSON(data);
+						alert(json.html);
+						$("#rtnMessage")[0].innerText = " 登錄成功";
+						$("#logArea").hide();
+						$("#token")[0].innerText = json[1];
+						$("#count")[0].innerText = "0";
+					},
+					error: function (xhr, status, error) {
+						alert("錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
 					}
-				}).fail(function($xhr) {  
-					$("#rtnMessage")[0].innerText = $xhr.responseJSON.message;
 				});
 			}
-			function register(){
-				
-			}
-			function Betting(bet){
-				
+			function checkToken(){
+				var num = Number($("#count")[0].innerText);
+				if(num == 10)
+				{
+					var json = azureAjax("TokenRenewal?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value);
+					if(json != null)
+					{
+						$("#count")[0].innerText = "0";
+						$("#token")[0].innerText = json[1];
+					}
+				}
+				else
+					$("#count")[0].innerText = num+1;
 			}
 		</script>
 	</head>
@@ -59,15 +106,45 @@
 			密碼：
 			<input type="text" id="password" maxlength="30"/>
 			<button onclick="login()">登錄</button> 
-			<button onclick="register()">註冊</button> 
+			<button onclick="register()">註冊</button>
+			<input type="text" id="id" style="display:none"/>
+			<input type="text" id="token" style="display:none"/>
+			<input type="text" id="count" style="display:none"/>
 		</div>
 		<div>
+			訊息：
 			<label id="rtnMessage"/>
 		</div>
-		<div id="casino">
+		<div id="BigSmall">
+			遊戲：賭大小
+			現金：
 			<label id="Money"/>
-			<button onclick="Betting('Big')">大</button>
-			<button onclick="Betting('Small')">小</button>
+			賭注：
+			<input type="text" id="betAmount" maxlength="20"/>
+			下注：
+			<br/>
+			1賠1：
+			<button onclick="Betting('Big','')">大</button>
+			<button onclick="Betting('Small','')">小</button>
+			<br/>
+			1賠11：
+			<button onclick="Betting('Double','1')">雙1</button>
+			<button onclick="Betting('Double','2')">雙2</button>
+			<button onclick="Betting('Double','3')">雙3</button>
+			<button onclick="Betting('Double','4')">雙4</button>
+			<button onclick="Betting('Double','5')">雙5</button>
+			<button onclick="Betting('Double','6')">雙6</button>
+			<br/>
+			1賠30：
+			<button onclick="Betting('Triple','0')">圍骰(三顆骰子數字相同)</button>
+			<br/>
+			1賠180：
+			<button onclick="Betting('Triple','1')">圍1</button>
+			<button onclick="Betting('Triple','2')">圍2</button>
+			<button onclick="Betting('Triple','3')">圍3</button>
+			<button onclick="Betting('Triple','4')">圍4</button>
+			<button onclick="Betting('Triple','5')">圍5</button>
+			<button onclick="Betting('Triple','6')">圍6</button>
 		</div>
 	</body>
 	
