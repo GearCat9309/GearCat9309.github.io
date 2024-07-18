@@ -18,7 +18,14 @@
 					dataType: 'json',
 					type: "GET",
 					success: function(result){
-						return $.parseJSON(data);
+						var json = $.parseJSON(result);
+						if(json[0] == "Err")
+						{
+							$("#rtnMessage")[0].innerText = json[1];
+							return null;
+						}
+						else
+							return json;
 					},
 					error: function (xhr, status, error) {
 						alert("ajax連線錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
@@ -37,19 +44,22 @@
 				{
 					$("#rtnMessage")[0].innerText = " 登錄成功";
 					$("#logArea").hide();
+					$("#userProfile").Show();
 					$("#id")[0].innerText = json[1];
 					$("#token")[0].innerText = json[2];
+					$("#name")[0].innerText = json[3];
 					$("#count")[0].innerText = "0";
 				}
+				//讀取現金
+				var json = azureAjax("CasinoUserData?ID="+$("#account")[0].value+"&Token="+$("#token")[0].value);
+				if(json != null)
+					$("#money")[0].innerText = json[1];
 			}
 			function register(){
-				var json = azureAjax("Register?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value);
+				var json = azureAjax("Register?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value+"&Name="+$("#registerName")[0].value);
 				if(json != null)
 				{
-					$("#rtnMessage")[0].innerText = " 登錄成功";
-					$("#logArea").hide();
-					$("#token")[0].innerText = json[1];
-					$("#count")[0].innerText = "0";
+					$("#rtnMessage")[0].innerText = json[1];
 				}
 			}
 			function Betting(betType,betDetail){
@@ -61,27 +71,9 @@
 				var json = azureAjax("Betting?ID="+id+"&Token="+token+"&Game="+game+"&BetType="+betType+"&betDetail="+betDetail+"&betAmount="+betAmount);
 				if(json != null)
 				{
-					$("#rtnMessage")[0].innerText = " 登錄成功";
-					$("#logArea").hide();
-					$("#token")[0].innerText = json[1];
-					$("#count")[0].innerText = "0";
+					$("#rtnMessage")[0].innerText = json[1];
+					$("#money")[0].innerText = Number($("#money")[0].innerText)+Number(json[2]);
 				}
-				$.ajax({
-					url: azureUrl+"Login?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value ,					
-					dataType: 'json',
-					type: "GET",
-					success: function(result){
-						var json = $.parseJSON(data);
-						alert(json.html);
-						$("#rtnMessage")[0].innerText = " 登錄成功";
-						$("#logArea").hide();
-						$("#token")[0].innerText = json[1];
-						$("#count")[0].innerText = "0";
-					},
-					error: function (xhr, status, error) {
-						alert("錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
-					}
-				});
 			}
 			function checkToken(){
 				var num = Number($("#count")[0].innerText);
@@ -105,11 +97,17 @@
 			<input type="text" id="account" maxlength="30"/>
 			密碼：
 			<input type="text" id="password" maxlength="30"/>
+			姓名：
+			<input type="text" id="registerName" maxlength="30"/>
 			<button onclick="login()">登錄</button> 
 			<button onclick="register()">註冊</button>
 			<input type="text" id="id" style="display:none"/>
 			<input type="text" id="token" style="display:none"/>
 			<input type="text" id="count" style="display:none"/>
+		</div>
+		<div id="userProfile" style="display:none">
+			玩家姓名：
+			<label id="name"/>
 		</div>
 		<div>
 			訊息：
@@ -118,7 +116,7 @@
 		<div id="BigSmall">
 			遊戲：賭大小
 			現金：
-			<label id="Money"/>
+			<label id="money"/>
 			賭注：
 			<input type="text" id="betAmount" maxlength="20"/>
 			下注：
