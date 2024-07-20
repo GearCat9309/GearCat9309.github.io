@@ -11,11 +11,11 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 		<script>
-			function azureAjax(parameter, callBack){
+			function azureAjax(parameter, callBack, errFunc){
 				var azureUrl="https://onlinegame20240626204926.azurewebsites.net/api/";
 				var localUrl="http://localhost:7035/api/";
 				$.ajax({
-					url: azureUrl+parameter,
+					url: localUrl+parameter,
 					timeout: 180000,
 					dataType: 'json',
 					type: "GET",
@@ -29,7 +29,10 @@
 							callBack(json);
 					},
 					error: function (xhr, status, error) {
-						alert("ajax連線錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
+						if(errFunc != undefined)
+							undefined();
+						else
+							alert("ajax連線錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
 					}
 				});
 			}
@@ -57,14 +60,21 @@
 			function wakeUp(){
 				$("#rtnMessage")[0].innerText = "喚醒中，請稍候";
 				function callBack(json){
+					//不知道為啥不進這段
 					if(json[0] == "Err")
 					{
 						$("#rtnMessage")[0].innerText = "喚醒中，請稍候...";
 						wakeUp();
 					}
-					$("#rtnMessage")[0].innerText = "已喚醒";
+					else
+						$("#rtnMessage")[0].innerText = "已喚醒";
 				}
-				azureAjax("WakeUp",callBack);
+				//打補丁 呼叫失敗 再呼叫一次
+				function errFunc(){
+					$("#rtnMessage")[0].innerText = "喚醒中，請稍候...";
+					wakeUp();
+				}
+				azureAjax("WakeUp",callBack,errFunc);
 			}
 			function login(){
 				function callBack1(json){
