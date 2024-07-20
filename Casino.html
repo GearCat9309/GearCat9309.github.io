@@ -13,6 +13,7 @@
 		<script>
 			function azureAjax(parameter, callBack){
 				var azureUrl="https://onlinegame20240626204926.azurewebsites.net/api/";
+				var localUrl="http://localhost:7035/api/";
 				$.ajax({
 					url: azureUrl+parameter,
 					timeout: 180000,
@@ -32,9 +33,35 @@
 					}
 				});
 			}
+			function checkToken(processAfterCheck){
+				var num = Number($("#count")[0].value);
+				if(num == 10)
+				{
+					function callBack(json){
+						$("#count")[0].value = "1";
+						$("#token")[0].value = json[1];
+						//檢查成功執行函式
+						processAfterCheck();
+					}
+					var parameter = "TokenRenewal?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value
+					azureAjax(parameter,callBack);
+				}
+				else
+				{
+					$("#count")[0].value = num+1;
+					//沒檢查也執行函式
+					processAfterCheck();
+				}
+			}
+//以上為共用函式============================================================
 			function wakeUp(){
 				$("#rtnMessage")[0].innerText = "喚醒中，請稍候";
 				function callBack(json){
+					if(json[0] == "Err")
+					{
+						$("#rtnMessage")[0].innerText = "喚醒中，請稍候...";
+						wakeUp();
+					}
 					$("#rtnMessage")[0].innerText = "已喚醒";
 				}
 				azureAjax("WakeUp",callBack);
@@ -47,7 +74,7 @@
 					$("#id")[0].value = json[1];
 					$("#token")[0].value = json[2];
 					$("#name")[0].innerText = json[3];
-					$("#count")[0].value = "0";
+					$("#count")[0].value = "1";
 					//讀取現金
 					function callBack2(json){
 						$("#money")[0].innerText = json[1];
@@ -66,31 +93,39 @@
 				azureAjax(parameter,callBack);
 			}
 			function Betting(betType,betDetail){
-				checkToken();
-				function callBack(json){
-					$("#rtnMessage")[0].innerText = json[1];
-					$("#money")[0].innerText = Number($("#money")[0].innerText)+Number(json[2]);
-				}
-				var id=$("#id")[0].value;
-				var token=$("#token")[0].value;
-				var game="賭大小";
-				var betAmount = $("#betAmount")[0].value;
-				var parameter = "Betting?ID="+id+"&Token="+token+"&Game="+game+"&BetType="+betType+"&betDetail="+betDetail+"&betAmount="+betAmount;
-				azureAjax(parameter,callBack);
-			}
-			function checkToken(){
-				var num = Number($("#count")[0].innerText);
-				if(num == 10)
+				if($("#betAmount")[0].value=="0" || $("#betAmount")[0].value=="")
 				{
+					$("#rtnMessage")[0].innerText="沒賭注你賭心酸的嗎?";
+					return;
+				}
+				
+				function processAfterCheck(){
 					function callBack(json){
-						$("#count")[0].value = "0";
-						$("#token")[0].value = json[1];
+						$("#rtnMessage")[0].innerText = json[1];
+						$("#money")[0].innerText = Number($("#money")[0].innerText)+Number(json[2]);
 					}
-					var parameter = "TokenRenewal?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value
+					var id=$("#id")[0].value;
+					var token=$("#token")[0].value;
+					var game="賭大小";
+					var betAmount = $("#betAmount")[0].value;
+					var parameter = "Betting?ID="+id+"&Token="+token+"&Game="+game+"&BetType="+betType+"&betDetail="+betDetail+"&betAmount="+betAmount;
 					azureAjax(parameter,callBack);
 				}
-				else
-					$("#count")[0].value = num+1;
+				//每次呼叫都要檢查Token
+				checkToken(processAfterCheck);
+			}
+			function casinoRank(){
+				function processAfterCheck(){
+					function callBack(json){
+						$("#rankList")[0].innerText = json[1].replaceAll("|","\n");
+					}
+					var id=$("#id")[0].value;
+					var token=$("#token")[0].value;
+					var parameter = "CasinoRank?ID="+id+"&Token="+token;
+					azureAjax(parameter,callBack);
+				}
+				//每次呼叫都要檢查Token
+				checkToken(processAfterCheck);
 			}
 		</script>
 	</head>
@@ -110,26 +145,25 @@
 		</div>
 		<div id="userProfile" style="display:none">
 			玩家姓名：
-			<label id="name"/>
+			<label id="name"></label>
 		</div>
 		<div>
 			訊息：
-			<label id="rtnMessage"/>
+			<label id="rtnMessage"></label>
 		</div>
 		<div id="BigSmall">
 			遊戲：賭大小
 			<br/>
 			現金：
-			<label id="money"/>
+			<label id="money"></label>
 			<br/>
 			賭注：
 			<input type="text" id="betAmount" maxlength="20"/>
 			<br/>
-			下注：
 			<br/>
 			1賠1：
-			<button onclick="Betting('Big','')">大</button>
-			<button onclick="Betting('Small','')">小</button>
+			<button onclick="Betting('Big','0')">大</button>
+			<button onclick="Betting('Small','0')">小</button>
 			<br/>
 			1賠11：
 			<button onclick="Betting('Double','1')">雙1</button>
@@ -150,6 +184,11 @@
 			<button onclick="Betting('Triple','5')">圍5</button>
 			<button onclick="Betting('Triple','6')">圍6</button>
 		</div>
+		<div>
+			排行榜：<button onclick="casinoRank()">更新</button> 
+			<div id="rankList">
+				
+			</div>
+		</div>
 	</body>
-	
 </html>
