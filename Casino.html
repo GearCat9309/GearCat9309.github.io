@@ -30,7 +30,7 @@
 					},
 					error: function (xhr, status, error) {
 						if(errFunc != undefined)
-							undefined();
+							errFunc();
 						else
 							alert("ajax連線錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
 					}
