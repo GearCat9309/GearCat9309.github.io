@@ -102,6 +102,7 @@
 				function processAfterCheck(){
 					function callBack(json){
 						$("#rtnMessage")[0].innerText = json[1];
+						$("#record")[0].innerText += json[1] + "\n";
 						$("#money")[0].innerText = Number($("#money")[0].innerText)+Number(json[2]);
 					}
 					var id=$("#id")[0].value;
@@ -189,6 +190,9 @@
 			<div id="rankList">
 				
 			</div>
+		</div>
+		<div id="record">
+				
 		</div>
 	</body>
 </html>
