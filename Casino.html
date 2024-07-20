@@ -103,6 +103,10 @@
 					function callBack(json){
 						$("#rtnMessage")[0].innerText = json[1];
 						$("#record")[0].innerText += json[1] + "\n";
+						if(json[1].substring(6,7)=="大")
+							$("#bigCount")[0].innerText = Number($("#bigCount")[0].innerText) + 1;
+						else if(json[1].substring(6,7)=="小")
+							$("#smallCount")[0].innerText = Number($("#smallCount")[0].innerText) + 1;
 						$("#money")[0].innerText = Number($("#money")[0].innerText)+Number(json[2]);
 					}
 					var id=$("#id")[0].value;
@@ -193,6 +197,11 @@
 		</div>
 		<div>
 			記錄:<button onclick="$('#record')[0].innerText=''">清除</button> 
+			<br/>
+			大：<label id="bigCount"></label>
+			<br/>
+			小：<label id="smallCount"></label>
+			<br/>
 			<div id="record">
 					
 			</div>
