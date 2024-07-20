@@ -14,7 +14,8 @@
 			function azureAjax(parameter, callBack){
 				var azureUrl="https://onlinegame20240626204926.azurewebsites.net/api/";
 				$.ajax({
-					url: azureUrl+parameter,					
+					url: azureUrl+parameter,
+					timeout: 180000,
 					dataType: 'json',
 					type: "GET",
 					success: function(result){
@@ -51,7 +52,7 @@
 					function callBack2(json){
 						$("#money")[0].innerText = json[1];
 					}
-					parameter = "CasinoUserData?ID="+$("#account")[0].value+"&Token="+$("#token")[0].value
+					parameter = "CasinoUserData?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value
 					azureAjax(parameter,callBack2);
 				}
 				var parameter = "Login?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value;
