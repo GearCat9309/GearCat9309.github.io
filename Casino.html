@@ -88,6 +88,10 @@
 					//讀取現金
 					function callBack2(json){
 						$("#money")[0].innerText = json[1];
+						if(Number(json[1])<1000)
+							$("#btnBorrowMoney").show();
+						else
+							$("#btnBorrowMoney").hide();
 					}
 					parameter = "CasinoUserData?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value
 					azureAjax(parameter,callBack2);
@@ -117,7 +121,10 @@
 							$("#bigCount")[0].innerText = Number($("#bigCount")[0].innerText) + 1;
 						else if(json[1].substring(6,7)=="小")
 							$("#smallCount")[0].innerText = Number($("#smallCount")[0].innerText) + 1;
-						$("#money")[0].innerText = Number($("#money")[0].innerText)+Number(json[2]);
+						var number = Number($("#money")[0].innerText)+Number(json[2]);
+						$("#money")[0].innerText = number;
+						if(number<1000)
+							$("#btnBorrowMoney").show();
 					}
 					var id=$("#id")[0].value;
 					var token=$("#token")[0].value;
