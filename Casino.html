@@ -142,6 +142,20 @@
 				//每次呼叫都要檢查Token
 				checkToken(processAfterCheck);
 			}
+			function borrowMoney(){
+				function processAfterCheck(){
+					function callBack(json){
+						$("#money")[0].innerText = json[1].replaceAll("|","\n");
+						$("#rtnMessage")[0].innerText="對於沒錢的客戶，賭場可以無條件提供1000元賭資。";
+					}
+					var id=$("#id")[0].value;
+					var token=$("#token")[0].value;
+					var parameter = "BorrowMoney?ID="+id+"&Token="+token;
+					azureAjax(parameter,callBack);
+				}
+				//每次呼叫都要檢查Token
+				checkToken(processAfterCheck);
+			}
 		</script>
 	</head>
 	<body onload="wakeUp()">
@@ -171,6 +185,7 @@
 			<br/>
 			現金：
 			<label id="money"></label>
+			<button id="btnBorrowMoney" onclick="borrowMoney()">借錢</button>
 			<br/>
 			賭注：
 			<input type="text" id="betAmount" maxlength="10"/>
