@@ -153,7 +153,8 @@
 				function processAfterCheck(){
 					function callBack(json){
 						$("#money")[0].innerText = json[1].replaceAll("|","\n");
-						$("#rtnMessage")[0].innerText="對於沒錢的客戶，賭場可以無條件提供1000元賭資。";
+						$("#rtnMessage")[0].innerText="對於沒錢的客戶，賭場可以無條件將您的現金補至1000元。";
+						$("#btnBorrowMoney").hide();
 					}
 					var id=$("#id")[0].value;
 					var token=$("#token")[0].value;
