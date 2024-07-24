@@ -20,7 +20,7 @@
 			}
 		</style>
 		<script>
-			function azureAjax(parameter, callBack, errFunc){
+			function azureAjax(parameter, callBack, errFunc, counter){
 				var azureUrl="https://onlinegame20240626204926.azurewebsites.net/api/";
 				var localUrl="http://localhost:7035/api/";
 				$.ajax({
@@ -39,7 +39,7 @@
 					},
 					error: function (xhr, status, error) {
 						if(errFunc != undefined)
-							errFunc();
+							errFunc(counter);
 						else
 							alert("ajax連線錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
 					}
@@ -75,21 +75,22 @@
 					if(json[0] == "Err")
 					{
 						$("#rtnMessage")[0].innerText = "喚醒中，請稍候...";
-						wakeUp(counter+1);
+						wakeUp();
 					}
 					else
 						$("#rtnMessage")[0].innerText = "已喚醒";
 				}
 				//打補丁 呼叫失敗 再呼叫一次
-				function errFunc(){
+				function errFunc(counter){
 					$("#rtnMessage")[0].innerText = "喚醒中，請稍候...";
 					if(counter>3)
 					{
 						$("#rtnMessage")[0].innerText = "喚醒失敗";
 					}
-					wakeUp(counter+1);
+					else
+						wakeUp(counter+1);
 				}
-				azureAjax("WakeUp",callBack,errFunc);
+				azureAjax("WakeUp",callBack,errFunc,counter);
 			}
 			function login(){
 				function callBack1(json){
@@ -195,13 +196,13 @@
 			}
 		</script>
 	</head>
-	<body onload="wakeUp(0)">
+	<body onload="wakeUp(0)" class="bg-dark text-white">
 		<nav class="navbar" style="height:10%">
 			<div class="container">
-				<a class='navbar-brand'>離開</a>
-				<a href="" onclick="return changeMode('賭大小')" class='navbar-brand'>賭大小</a>
-				<a href="" onclick="return changeMode('私人賭盤')" class='navbar-brand'>私人賭盤</a>
-				<a class='navbar-brand'>借貸</a>
+				<a class='navbar-brand text-white'>離開</a>
+				<a href="" onclick="return changeMode('賭大小')" class='navbar-brand text-white'>賭大小</a>
+				<a href="" onclick="return changeMode('私人賭盤')" class='navbar-brand text-white'>私人賭盤</a>
+				<a class='navbar-brand text-white'>借貸</a>
 			</div>
 		</nav>
 		<div id="BigSmall" class="container-fluid" style="height:90%">
@@ -214,58 +215,58 @@
 						</div>
 					</div>
 					<div class="row justify-content-center">
-						<div class="col-10" id="rankList">測試</div>
+						<div class="col-10" id="rankList"></div>
 					</div>
 				</div>
 				<div class="col-6 bg-success h-100 d-flex flex-column">
 					<div class="row justify-content-center">
-						<button class="col-3 btn borderRed m-1" onclick="Betting('Big','0')">
+						<button class="col-3 btn btn-success borderRed m-1" onclick="Betting('Big','0')">
 							<span style="display:block;font-size:24px;">大</span>
 							<span style="font-size:14px;">1賠1</span>
 						</button>
-						<button class="col-3 btn borderRed m-1" onclick="Betting('Triple','0')">
+						<button class="col-3 btn btn-success borderRed m-1" onclick="Betting('Triple','0')">
 							<span style="display:block;font-size:24px;">圍骰</span>
 							<span style="display:block;font-size:14px;">三顆骰子數字相同</span>
 							<span style="font-size:14px;">1賠30</span>
 						</button>
-						<button class="col-3 btn borderRed m-1" onclick="Betting('Small','0')">
+						<button class="col-3 btn btn-success borderRed m-1" onclick="Betting('Small','0')">
 							<span style="display:block;font-size:24px;">小</span>
 							<span style="font-size:14px;">1賠1</span>
 						</button>
 					</div>
 					<div class="row justify-content-center">
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed" onclick="Betting('Triple','1')">
+							<button class="w-100 btn btn-success borderRed" onclick="Betting('Triple','1')">
 								<span style="display:block;font-size:24px;">圍骰1</span>
 								<span style="font-size:14px;">1賠180</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed" onclick="Betting('Triple','2')">
+							<button class="w-100 btn btn-success borderRed" onclick="Betting('Triple','2')">
 								<span style="display:block;font-size:24px;">圍骰2</span>
 								<span style="font-size:14px;">1賠180</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed " onclick="Betting('Triple','3')">
+							<button class="w-100 btn btn-success borderRed " onclick="Betting('Triple','3')">
 								<span style="display:block;font-size:24px;">圍骰3</span>
 								<span style="font-size:14px;">1賠180</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed " onclick="Betting('Triple','4')">
+							<button class="w-100 btn btn-success borderRed " onclick="Betting('Triple','4')">
 								<span style="display:block;font-size:24px;">圍骰4</span>
 								<span style="font-size:14px;">1賠180</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed " onclick="Betting('Triple','5')">
+							<button class="w-100 btn btn-success borderRed " onclick="Betting('Triple','5')">
 								<span style="display:block;font-size:24px;">圍骰5</span>
 								<span style="font-size:14px;">1賠180</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed " onclick="Betting('Triple','6')">
+							<button class="w-100 btn btn-success borderRed " onclick="Betting('Triple','6')">
 								<span style="display:block;font-size:24px;">圍骰6</span>
 								<span style="font-size:14px;">1賠180</span>
 							</button>
@@ -273,37 +274,37 @@
 					</div>
 					<div class="row justify-content-center">
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed" onclick="Betting('Double','1')">
+							<button class="w-100 btn btn-success borderRed" onclick="Betting('Double','1')">
 								<span style="display:block;font-size:24px;">雙骰1</span>
 								<span style="font-size:14px;">1賠180</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed" onclick="Betting('Double','2')">
+							<button class="w-100 btn btn-success borderRed" onclick="Betting('Double','2')">
 								<span style="display:block;font-size:24px;">雙骰2</span>
 								<span style="font-size:14px;">1賠11</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed " onclick="Betting('Double','3')">
+							<button class="w-100 btn btn-success borderRed " onclick="Betting('Double','3')">
 								<span style="display:block;font-size:24px;">雙骰3</span>
 								<span style="font-size:14px;">1賠11</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed " onclick="Betting('Double','4')">
+							<button class="w-100 btn btn-success borderRed " onclick="Betting('Double','4')">
 								<span style="display:block;font-size:24px;">雙骰4</span>
 								<span style="font-size:14px;">1賠11</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed " onclick="Betting('Double','5')">
+							<button class="w-100 btn btn-success borderRed " onclick="Betting('Double','5')">
 								<span style="display:block;font-size:24px;">雙骰5</span>
 								<span style="font-size:14px;">1賠11</span>
 							</button>
 						</div>
 						<div class="col-2 p-1">
-							<button class="w-100 btn borderRed " onclick="Betting('Double','6')">
+							<button class="w-100 btn btn-success borderRed " onclick="Betting('Double','6')">
 								<span style="display:block;font-size:24px;">圍骰6</span>
 								<span style="font-size:14px;">1賠11</span>
 							</button>
@@ -314,14 +315,22 @@
 							<label class="col-form-label">賭注</label>
 						</div>
 						<div class="col-5">
-							<input type="number" class="form-control" id="betAmount" maxlength="10"/>
+							<input type="number" class="form-control bg-dark text-white" id="betAmount" maxlength="10"/>
 						</div>
 					</div>
 				</div>
 				<div class="col-3">
-					記錄:<button onclick="$('#record')[0].innerText=''">清除</button> 
-					<br/>
-					<div id="record"></div>
+					<div class="row justify-content-center">
+						<div class="col-10">
+							<label class="col-form-label">記錄</label>
+							<button class="btn btn-success" onclick="$('#record')[0].innerText=''">清除</button>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-10">
+							<div id="record"></div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="row" style="height:30%">
@@ -333,7 +342,7 @@
 									<label class="col-form-label">帳號</label>
 								</div>
 								<div class="col-9">
-									<input type="text" class="form-control" id="account" maxlength="30"/>
+									<input type="text" class="form-control bg-dark text-white" id="account" maxlength="30"/>
 								</div>
 							</div>
 							<div class="row">
@@ -341,7 +350,7 @@
 									<label class="col-form-label">密碼</label>
 								</div>
 								<div class="col-9">
-									<input type="password" class="form-control" id="password" maxlength="30"/>
+									<input type="password" class="form-control bg-dark text-white" id="password" maxlength="30"/>
 								</div>
 							</div>
 							<div class="row">
@@ -349,13 +358,13 @@
 									<label class="col-form-label">姓名</label>
 								</div>
 								<div class="col-9">
-									<input type="text" class="form-control" id="registerName" maxlength="30"/>
+									<input type="text" class="form-control bg-dark text-white" id="registerName" maxlength="30"/>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-12 text-end">
 									<button class="btn btn-success" onclick="login()">登錄</button> 
-									<button class="btn btn-info" onclick="register()">註冊</button>
+									<button class="btn btn-success" onclick="register()">註冊</button>
 									<input type="text" id="id" style="display:none"/>
 									<input type="text" id="token" style="display:none"/>
 									<input type="text" id="count" style="display:none"/>
