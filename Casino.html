@@ -20,11 +20,11 @@
 			}
 		</style>
 		<script>
-			function azureAjax(parameter, callBack, errFunc, counter){
+			function azureAjax(parameter, callBack){
 				var azureUrl="https://onlinegame20240626204926.azurewebsites.net/api/";
 				var localUrl="http://localhost:7035/api/";
 				$.ajax({
-					url: azureUrl+parameter,
+					url: localUrl+parameter,
 					timeout: 180000,
 					dataType: 'json',
 					type: "GET",
@@ -38,10 +38,7 @@
 							callBack(json);
 					},
 					error: function (xhr, status, error) {
-						if(errFunc != undefined)
-							errFunc(counter);
-						else
-							alert("ajax連線錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
+						alert("ajax連線錯誤: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
 					}
 				});
 			}
@@ -93,7 +90,7 @@
 				azureAjax("WakeUp",callBack,errFunc,counter);
 			}*/
 			window.onload=function(){
-				$("#rtnMessage")[0].innerText="你推開賭場的大門，眼前是一片炫目的霓虹燈和奢華的裝潢。賭場內，色彩繽紛的地毯延展至各個角落，賭桌上方的吊燈閃閃發光。你似乎能聽見裡頭傳來骰子滾動及籌碼碰撞的聲響。";
+				$("#rtnMessage")[0].innerText="你推開賭場的大門，眼前是一片炫目的霓虹燈和奢華的裝潢。賭場內，色彩繽紛的地毯延展至各個角落，賭桌上方的吊燈閃閃發光。你似乎能聽見裡頭傳來骰子的滾動聲，及籌碼碰撞的聲響。";
 				$("#BigSmall").show();
 				$("#CustomBet").hide();
 			}
@@ -112,6 +109,7 @@
 							$("#btnNoMoneyHelp").show();
 						else
 							$("#btnNoMoneyHelp").hide();
+						//都做完了再完整顯示使用者資訊區塊
 						$("#userProfile").show();
 					}
 					parameter = "CasinoUserData?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value
@@ -212,19 +210,19 @@
 		</nav>
 		<div id="BigSmall" class="container-fluid" style="height:90%">
 			<div class="row" style="height:70%">
-				<div class="col-3">
+				<div class="col-2 h-100 overflow-auto">
 					<div class="row justify-content-center">
-						<div class="col-10">
+						<div class="col-12">
 							<label class="col-form-label">排行榜</label>
-							<button class="btn btn-success" onclick="casinoRank()">更新</button>
+							<button class="btn btn-success btn-sm" onclick="casinoRank()">更新</button>
 						</div>
 					</div>
 					<div class="row justify-content-center">
-						<div class="col-10" id="rankList"></div>
+						<div class="col-12" id="rankList"></div>
 					</div>
 				</div>
-				<div class="col-6 bg-success h-100 d-flex flex-column">
-					<div class="row justify-content-center">
+				<div class="col-8 px-3 bg-success h-100 d-flex flex-column rounded">
+					<div class="row mt-1 justify-content-center">
 						<button class="col-3 btn btn-success borderRed m-1" onclick="Betting('Big','0')">
 							<span style="display:block;font-size:24px;">大</span>
 							<span style="font-size:14px;">1賠1</span>
@@ -240,7 +238,7 @@
 						</button>
 					</div>
 					<div class="row justify-content-center">
-						<div class="col-2 p-1">
+						<div class="col-2 ml-3 p-1">
 							<button class="w-100 btn btn-success borderRed" onclick="Betting('Triple','1')">
 								<span style="display:block;font-size:24px;">圍骰1</span>
 								<span style="font-size:14px;">1賠180</span>
@@ -277,7 +275,7 @@
 							</button>
 						</div>
 					</div>
-					<div class="row justify-content-center">
+					<div class="row ml-1 mr-1 justify-content-center">
 						<div class="col-2 p-1">
 							<button class="w-100 btn btn-success borderRed" onclick="Betting('Double','1')">
 								<span style="display:block;font-size:24px;">雙骰1</span>
@@ -324,30 +322,30 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-3 h-100 overflow-auto">
+				<div class="col-2 h-100 overflow-auto">
 					<div class="row justify-content-center">
-						<div class="col-10">
+						<div class="col-12">
 							<label class="col-form-label">記錄</label>
-							<button class="btn btn-success" onclick="$('#record')[0].innerText=''">清除</button>
+							<button class="btn btn-success btn-sm" onclick="$('#record')[0].innerText=''">清除</button>
 						</div>
 					</div>
 					<div class="row justify-content-center">
-						<div class="col-10">
-							<div id="record"></div>
+						<div class="col-12">
+							<label id="record">123</label>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row" style="height:30%">
-				<div class="col-3">
-					<div class="row justify-content-center" id="logArea">
+			<div class="row mt-1" style="height:28%">
+				<div class="col-3 border border-white">
+					<div class="row pt-1 justify-content-center" id="logArea">
 						<div class="col-10">
 							<div class="row">
 								<div class="col-3 text-end">
 									<label class="col-form-label">帳號</label>
 								</div>
 								<div class="col-9">
-									<input type="text" class="form-control bg-dark text-white" id="account" maxlength="30"/>
+									<input type="text" class="form-control form-control-sm bg-dark text-white" id="account" maxlength="30"/>
 								</div>
 							</div>
 							<div class="row">
@@ -355,7 +353,7 @@
 									<label class="col-form-label">密碼</label>
 								</div>
 								<div class="col-9">
-									<input type="password" class="form-control bg-dark text-white" id="password" maxlength="30"/>
+									<input type="password" class="form-control form-control-sm bg-dark text-white" id="password" maxlength="30"/>
 								</div>
 							</div>
 							<div class="row">
@@ -363,13 +361,13 @@
 									<label class="col-form-label">姓名</label>
 								</div>
 								<div class="col-9">
-									<input type="text" class="form-control bg-dark text-white" id="registerName" maxlength="30"/>
+									<input type="text" class="form-control form-control-sm bg-dark text-white" id="registerName" maxlength="30"/>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-12 text-end">
-									<button class="btn btn-success" onclick="login()">登錄</button> 
-									<button class="btn btn-success" onclick="register()">註冊</button>
+									<button class="btn btn-success btn-sm" onclick="login()">登錄</button> 
+									<button class="btn btn-success btn-sm" onclick="register()">註冊</button>
 									<input type="text" id="id" style="display:none"/>
 									<input type="text" id="token" style="display:none"/>
 									<input type="text" id="count" style="display:none"/>
@@ -396,11 +394,10 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-6">
-					訊息：
+				<div class="col-6 border-top border-bottom border-white">
 					<label id="rtnMessage"></label>
 				</div>
-				<div class="col-3">
+				<div class="col-3 border border-white">
 					統計：
 					<br/>
 					大：<label id="bigCount"></label>
