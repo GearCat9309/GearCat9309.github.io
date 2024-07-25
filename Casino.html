@@ -66,7 +66,7 @@
 				}
 			}
 //以上為共用函式============================================================
-			function wakeUp(counter){
+			/*function wakeUp(counter){
 				$("#rtnMessage")[0].innerText = "喚醒中，請稍候";
 				$("#BigSmall").show();
 				$("#CustomBet").hide();
@@ -91,12 +91,16 @@
 						wakeUp(counter+1);
 				}
 				azureAjax("WakeUp",callBack,errFunc,counter);
+			}*/
+			window.onload=function(){
+				$("#rtnMessage")[0].innerText="你推開賭場的大門，眼前是一片炫目的霓虹燈和奢華的裝潢。賭場內，色彩繽紛的地毯延展至各個角落，賭桌上方的吊燈閃閃發光。你似乎能聽見裡頭傳來骰子滾動及籌碼碰撞的聲響。";
+				$("#BigSmall").show();
+				$("#CustomBet").hide();
 			}
 			function login(){
 				function callBack1(json){
-					$("#rtnMessage")[0].innerText = " 登錄成功";
+					$("#rtnMessage")[0].innerText = " 登錄成功。";
 					$("#logArea").hide();
-					$("#userProfile").show();
 					$("#id")[0].value = json[1];
 					$("#token")[0].value = json[2];
 					$("#name")[0].innerText = json[3];
@@ -105,9 +109,10 @@
 					function callBack2(json){
 						$("#money")[0].innerText = json[1];
 						if(Number(json[1])<1000)
-							$("#btnBorrowMoney").show();
+							$("#btnNoMoneyHelp").show();
 						else
-							$("#btnBorrowMoney").hide();
+							$("#btnNoMoneyHelp").hide();
+						$("#userProfile").show();
 					}
 					parameter = "CasinoUserData?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value
 					azureAjax(parameter,callBack2);
@@ -125,14 +130,14 @@
 			function Betting(betType,betDetail){
 				if($("#betAmount")[0].value=="0" || $("#betAmount")[0].value=="")
 				{
-					$("#rtnMessage")[0].innerText="沒賭注你賭心酸的嗎?";
+					$("#rtnMessage")[0].innerText="你將空氣放在桌上，莊家沒有任何反應。";
 					return;
 				}
 				
 				function processAfterCheck(){
 					function callBack(json){
 						$("#rtnMessage")[0].innerText = json[1];
-						$("#record")[0].innerText += json[1] + "\n";
+						$("#record")[0].innerText = json[1] + "\n" + $("#record")[0].innerText;
 						if(json[1].substring(6,7)=="大")
 							$("#bigCount")[0].innerText = Number($("#bigCount")[0].innerText) + 1;
 						else if(json[1].substring(6,7)=="小")
@@ -140,7 +145,7 @@
 						var number = Number($("#money")[0].innerText)+Number(json[2]);
 						$("#money")[0].innerText = number;
 						if(number<1000)
-							$("#btnBorrowMoney").show();
+							$("#btnNoMoneyHelp").show();
 					}
 					var id=$("#id")[0].value;
 					var token=$("#token")[0].value;
@@ -165,12 +170,12 @@
 				//每次呼叫都要檢查Token
 				checkToken(processAfterCheck);
 			}
-			function borrowMoney(){
+			function noMoneyHelp(){
 				function processAfterCheck(){
 					function callBack(json){
 						$("#money")[0].innerText = json[1].replaceAll("|","\n");
-						$("#rtnMessage")[0].innerText="賭場好心的將你的現金補充到1000元。";
-						$("#btnBorrowMoney").hide();
+						$("#rtnMessage")[0].innerText="你向賭場的工作人員求助，他給了你一些錢。";
+						$("#btnNoMoneyHelp").hide();
 					}
 					var id=$("#id")[0].value;
 					var token=$("#token")[0].value;
@@ -196,7 +201,7 @@
 			}
 		</script>
 	</head>
-	<body onload="wakeUp(0)" class="bg-dark text-white">
+	<body class="bg-dark text-white">
 		<nav class="navbar" style="height:10%">
 			<div class="container">
 				<a class='navbar-brand text-white'>離開</a>
@@ -312,14 +317,14 @@
 					</div>
 					<div class="row justify-content-center align-items-center flex-grow-1">
 						<div class="col-2 text-end">
-							<label class="col-form-label">賭注</label>
+							<label class="col-form-label">下注</label>
 						</div>
 						<div class="col-5">
 							<input type="number" class="form-control bg-dark text-white" id="betAmount" maxlength="10"/>
 						</div>
 					</div>
 				</div>
-				<div class="col-3">
+				<div class="col-3 h-100 overflow-auto">
 					<div class="row justify-content-center">
 						<div class="col-10">
 							<label class="col-form-label">記錄</label>
@@ -385,7 +390,7 @@
 								<div class="col-12">
 									<label class="col-form-label">現金：</label>
 									<label class="col-form-label" id="money"></label>
-									<button id="btnBorrowMoney" onclick="borrowMoney()">借錢</button>
+									<button id="btnNoMoneyHelp" onclick="noMoneyHelp()">求助</button>
 								</div>
 							</div>
 						</div>
