@@ -22,7 +22,8 @@
 		<script>
 			function azureAjax(parameter, callBack){
 				var azureUrl="https://onlinegame20240626204926.azurewebsites.net/api/";
-				var localUrl="http://localhost:7035/api/";
+				if(document.URL.substring(0,4) == "file")
+					azureUrl="http://localhost:7035/api/";
 				$.ajax({
 					url: azureUrl+parameter,
 					timeout: 180000,
@@ -376,18 +377,22 @@
 							
 						</div>
 					</div>
-					<div class="row justify-content-center" id="userProfile" style="display:none">
-						<div class="col-10">
+					<div class="row pt-1 justify-content-center" id="userProfile" style="display:none">
+						<div class="col-12">
 							<div class="row">
-								<div class="col-12">
-									<label class="col-form-label">玩家姓名：</label>
-									<label class="col-form-label" id="name"></label>
+								<div class="col-4 text-end">
+									<label class="col-form-label p-0">玩家姓名：</label>
+								</div>
+								<div class="col-8">
+									<label class="col-form-label p-0" id="name"></label>
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-12">
-									<label class="col-form-label">現金：</label>
-									<label class="col-form-label" id="money"></label>
+								<div class="col-4 text-end">
+									<label class="col-form-label p-0">現金：</label>
+								</div>
+								<div class="col-8">
+									<label class="col-form-label p-0" id="money"></label>
 									<button id="btnNoMoneyHelp" onclick="noMoneyHelp()">求助</button>
 								</div>
 							</div>
