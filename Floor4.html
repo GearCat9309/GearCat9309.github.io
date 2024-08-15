@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<!-- 使用後在手機上的大小比較正確 -->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>4樓</title>
+		<!--引用jQuery -->
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+		<!--引用Bootstrap-->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+		<!--泛用函式-->
+		<script src="common.js"></script>
+		<style>
+			html, body {
+				height: 100vh;
+				padding:0px;
+			}
+			.border-grey{
+				border-color: grey !important;
+			}
+		</style>
+		<script>
+			function onLoad(){}
+		</script>
+	</head>
+	<body class="bg-dark text-white">
+		<!--網格容器-->
+		<div class="container-fluid" style="height:100%">
+			<!-- 列1 -->
+			<div class="row" style="height:40%">
+				<!-- 欄1 -->
+				<div class="col-1 border border-grey">
+					
+				</div>
+				<!--欄2-->
+				<div class="col-3 border border-grey">
+					
+				</div>
+				<!--欄3-->
+				<div class="col-5 border border-grey d-flex align-items-center">
+					<div class="col-12 text-center">小賣部</div>
+				</div>
+				<!--欄4-->
+				<div class="col-3 border border-grey">
+					
+				</div>
+			</div>
+			<!-- 列2 -->
+			<div class="row" style="height:20%">
+				<!-- 欄1 -->
+				<div class="col-1 border border-grey d-flex align-items-center">
+					<div class="col-12 text-center">電梯</div>
+				</div>
+				<!--欄2-->
+				<div class="col-11 border border-grey d-flex align-items-center">
+					<div class="col-12 text-center">走廊</div>
+				</div>
+			</div>
+			<!-- 列3 -->
+			<div class="row" style="height:40%">
+				<!-- 欄1 -->
+				<div class="col-1 border border-grey">
+					
+				</div>
+				<!--欄2-->
+				<div class="col-11 border border-grey d-flex align-items-center">
+					<div class="col-12 text-center">
+						<button class="btn btn-secondary" onclick="window.location.href='Casino.html'">賭場</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
