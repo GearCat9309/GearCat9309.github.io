@@ -24,7 +24,13 @@ function azureAjax(parameter, callBack){
 }
 //每個指令都要檢查Token
 function checkToken(process){
-	var num = Number($("#count")[0].value);
+	if(id == null)
+	{
+		alert("請先登錄");
+		return;
+	}
+	
+	var num = Number(tc);
 	//要求重新給Token
 	if(num == 10)
 	{
@@ -33,7 +39,7 @@ function checkToken(process){
 			$("#token")[0].value = json[1];
 			process();
 		}
-		var parameter = "TokenRenewal?ID="+$("#id")[0].value+"&Token="+$("#token")[0].value
+		var parameter = "TokenRenewal?ID="+id+"&Token="+token;
 		azureAjax(parameter,ajaxSuccess);
 	}
 	else

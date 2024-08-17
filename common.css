@@ -1,0 +1,22 @@
+html, body {
+	height: 100vh;
+	padding:0px;
+	background-color: rgba(33,37,41);
+	color: white;
+}
+.border-red {
+	border-color: red !important;
+}
+.border-grey{
+	border-color: grey !important;
+}
+.border-white{
+	border-color: white !important;
+}
+.btn-circle{
+	border-radius: 50% !important;
+	aspect-ratio: 1/1;
+}
+.cursor-pointer{
+	cursor: pointer;
+}

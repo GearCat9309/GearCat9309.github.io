@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<!-- 使用後在手機上的大小比較正確 -->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>辦公室</title>
+		<!--引用jQuery -->
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+		<!--引用Bootstrap-->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+		<!--WebComponent-->
+		<script src="WC_login.js"></script>
+		<!--泛用函式-->
+		<script src="common.js"></script>
+		<script src="ajax.js"></script>
+		<!--泛用樣式-->
+		<link href="common.css" rel="stylesheet">
+		
+		<script>
+			function onLoad(){
+				$("#rtnMessage")[0].innerText="你走進辦公室，房間裡寂靜無聲，只有空調運作時隱約可聞的嗡嗡聲。這裡的裝修單調乏味，燈管顯然已經使用多年，光線黯淡無力，整個空間令你感到沉悶和壓抑。";
+			}
+			function clockIn(){
+				function processAfterCheck(){
+					function callBack(json){
+						$("#rtnMessage")[0].innerText = json[1];
+					}
+					var parameter = "ClockIn?ID="+id+"&Token="+token;
+					azureAjax(parameter,callBack);
+				}
+				//每次呼叫都要檢查Token
+				checkToken(processAfterCheck);
+			}
+			function clockOut(){
+				function processAfterCheck(){
+					function callBack(json){
+						$("#rtnMessage")[0].innerText = json[1];
+						var number = Number($("#money")[0].innerText)+Number(json[2]);
+						$("#money")[0].innerText = number;
+					}
+					var parameter = "ClockOut?ID="+id+"&Token="+token;
+					azureAjax(parameter,callBack);
+				}
+				//每次呼叫都要檢查Token
+				checkToken(processAfterCheck);
+			}
+			function OfficeMission(){
+			}
+		</script>
+	</head>
+	<body>
+		<!--導覽列-->
+		<div class="container-fluid" style="height:10%">
+			<div class="row d-flex align-items-center" style="height:100%">
+				<div class="col-4 text-center">
+					<span class="cursor-pointer" onclick="Enter('Floor6')">離開</span>
+				</div>
+			</div>
+		</div>
+		<!--網格容器-->
+		<div class="container-fluid" style="height:90%">
+			<!--第一列-->
+			<div class="row" style="height:70%">
+				<!--左-->
+				<div class="col-2 h-100 overflow-auto">
+					<div class="row justify-content-center">
+						<div class="col-12">
+							<label class="col-form-label">最佳員工榜</label>
+							<button class="btn btn-success btn-sm" onclick="OfficeRank()">更新</button>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-12" id="rankList"></div>
+					</div>
+				</div>
+				<!--中-->
+				<div class="col-8 px-3 h-100 d-flex align-items-center border border-white">
+					<div class="col-12 text-center">
+						<button class="btn btn-primary m-1" onclick="clockIn()">上班打卡</button>
+						<button class="btn btn-secondary m-1" onclick="clockOut()">下班打卡</button>
+					</div>
+				</div>
+				<!--右-->
+				<div class="col-2 h-100 overflow-auto">
+					<div class="row justify-content-center">
+						<div class="col-12">
+							<label class="col-form-label">任務</label>
+							<button class="btn btn-success btn-sm" onclick="OfficeMission()">更新</button>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-12">
+							<label id="mission"></label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--第二列-->
+			<div class="row mt-1" style="height:28%">
+				<!--左-->
+				<div class="col-4 pt-2 border border-white">
+					<login-template></login-template>
+				</div>
+				<!--中-->
+				<div class="col-4 pt-2 border-top border-bottom border-white">
+					<label id="rtnMessage"></label>
+				</div>
+				<!--右-->
+				<div class="col-4 pt-2 border border-white">
+					公告：
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
