@@ -16,8 +16,6 @@ window.onload = function() {
 	}
 	else
 	{
-		$('#name')[0].innerText = name;
-		$('#money')[0].innerText = money;
 		$("#logArea").hide();
 		$("#userProfile").show();
 	}
