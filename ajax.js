@@ -35,8 +35,8 @@ function checkToken(process){
 	if(num == 10)
 	{
 		function ajaxSuccess(json){
-			$("#count")[0].value = "1";
-			$("#token")[0].value = json[1];
+			tc = "1";
+			token = json[1];
 			process();
 		}
 		var parameter = "TokenRenewal?ID="+id+"&Token="+token;
@@ -44,7 +44,7 @@ function checkToken(process){
 	}
 	else
 	{
-		$("#count")[0].value = num+1;
+		tc = num+1;
 		process();
 	}
 }
