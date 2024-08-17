@@ -39,6 +39,7 @@
 						$("#rtnMessage")[0].innerText = json[1];
 						var number = Number($("#money")[0].innerText)+Number(json[2]);
 						$("#money")[0].innerText = number;
+						money = number;
 					}
 					var parameter = "ClockOut?ID="+id+"&Token="+token;
 					azureAjax(parameter,callBack);
