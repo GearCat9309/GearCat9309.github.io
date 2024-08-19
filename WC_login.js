@@ -33,22 +33,21 @@ class FormSection extends HTMLElement {
 	</div>`;
 	//玩家檔案
 	this.innerHTML += `
-	<div class="row justify-content-center" id="userProfile" style="display:none">
-		<div class="col-6">
+	<div class="row" id="userProfile" style="display:none">
+		<div class="col-12">
 			<div class="row mb-1">
-				<div class="col-3 px-1 text-center">姓名:</div>
-				<div class="col-9 px-1">
+				<div class="col-2 px-1 text-center">姓名:</div>
+				<div class="col-4 px-1">
 					<span id="name"></span>
+				</div>
+				<div class="col-2 px-1 text-center">現金:</div>
+				<div class="col-4 px-1">
+					<span id="money"></span>
 				</div>
 			</div>
 			<div class="row mb-1">
-			</div>
-		</div>
-		<div class="col-6">
-			<div class="row mb-1">
-				<div class="col-3 px-1 text-center">現金:</div>
-				<div class="col-9 px-1">
-					<span id="money"></span>
+				<div class="col-12 px-1 text-right">
+					<button class="btn btn-success btn-sm" onclick="logout()">登出</button>
 				</div>
 			</div>
 		</div>

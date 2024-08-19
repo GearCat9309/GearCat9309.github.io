@@ -58,6 +58,21 @@ function register(){
 	var parameter="Register?Account="+$("#account")[0].value+"&Password="+$("#password")[0].value+"&Name="+$("#registerName")[0].value;
 	azureAjax(parameter,callBack);
 }
+//登出
+function logout(){
+	sessionStorage.setItem("id",null);
+	sessionStorage.setItem("name",null);
+	sessionStorage.setItem("token",null);
+	sessionStorage.setItem("money",null);
+	sessionStorage.setItem("tc",null);
+	id = null;
+	token = null;
+	name = null;
+	money = null;
+	tc = null;
+	$("#logArea").show();
+	$("#userProfile").hide();
+}
 //進入其他區域
 function Enter(destination,...args){
 	//換頁記錄使用者資訊
