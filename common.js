@@ -32,9 +32,12 @@ function login(){
 		name=json[3];
 		money=json[4];
 		tc="1";
-		//登錄後不會變動的資料
+		//資料寫入SessionStorage
 		sessionStorage.setItem("id",id);
 		sessionStorage.setItem("name",name);
+		sessionStorage.setItem("token",token);
+		sessionStorage.setItem("money",money);
+		sessionStorage.setItem("tc",tc);
 		//玩家檔案顯示資料
 		$('#name')[0].innerText = name;
 		$('#money')[0].innerText = money;
