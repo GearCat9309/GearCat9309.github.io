@@ -44,6 +44,9 @@ function login(){
 		//顯示使用者資料，隱藏登入區塊
 		$("#logArea").hide();
 		$("#userProfile").show();
+		//清除登錄資料
+		$("#account")[0].value = "";
+		$("#password")[0].value = "";
 		if(typeof afterLogin === "function" )
 			afterLogin();
 	}
