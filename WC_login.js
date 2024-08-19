@@ -46,7 +46,7 @@ class FormSection extends HTMLElement {
 				</div>
 			</div>
 			<div class="row mb-1">
-				<div class="col-12 px-1 text-right">
+				<div class="col-12 px-1 text-end">
 					<button class="btn btn-success btn-sm" onclick="logout()">登出</button>
 				</div>
 			</div>
