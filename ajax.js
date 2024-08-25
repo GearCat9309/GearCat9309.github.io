@@ -1,5 +1,8 @@
 //呼叫Azure Function
 function azureAjax(parameter, callBack){
+	//先清空回傳訊息
+	$("#rtnMessage")[0].innerText = "";
+	
 	var azureUrl="https://onlinegame20240626204926.azurewebsites.net/api/";
 	if(document.URL.substring(0,4) == "file")
 		azureUrl="http://localhost:7035/api/";

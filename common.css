@@ -4,6 +4,9 @@ html, body {
 	background-color: rgba(33,37,41);
 	color: white;
 }
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: grey;
+}
 .border-red {
 	border-color: red !important;
 }
