@@ -23,8 +23,7 @@
 				$('#money')[0].innerText = money;
 				$('#name')[0].innerText = name;
 				
-				$("#BigSmall").show();
-				$("#CustomBet").hide();
+				changeMode("賭大小");
 			}
 			//下注
 			function Betting(betType,betDetail){
@@ -44,8 +43,6 @@
 							$("#smallCount")[0].innerText = Number($("#smallCount")[0].innerText) + 1;
 						var number = Number($("#money")[0].innerText)+Number(json[2]);
 						$("#money")[0].innerText = number;
-						if(number<1000)
-							$("#btnNoMoneyHelp").show();
 					}
 					var game="賭大小";
 					var betAmount = $("#betAmount")[0].value;
@@ -71,14 +68,232 @@
 				if(mode == "賭大小")
 				{
 					$("#BigSmall").show();
+					$("#BigSmallRecord").show();
 					$("#CustomBet").hide();
+					$("#CustomBetList").hide();
 				}
 				else if(mode == "私人賭盤")
 				{
+					if(id == null)
+					{
+						alert("請先登錄");
+						return;
+					}
 					$("#BigSmall").hide();
+					$("#BigSmallRecord").hide();
 					$("#CustomBet").show();
+					$("#CustomBetList").show();
+					$("#btnCreateBetPool").show();
+					$("#stopTime").show();
+					$("#btnCloseBetPool").hide();
+					$("#betPoolMoney").hide();
+					
+					//檢查是否有待收盤資料
+					function afterCheck(){
+						function callBack(json){
+							//無待收盤項目
+							if(json[0] == "N")
+								return;
+							
+							//設定收盤狀態
+							setCloseStatus();
+								
+							//選項
+							for(var i=0; i<json.length; i++)
+							{
+								//跳過說明
+								if(i == 0)
+									continue;
+								//主項目
+								if(i == 1)
+								{
+									var subjectSplit = json[i].split("|");
+									//項目
+									$("#betPoolID")[0].innerText = subjectSplit[0];
+									$("#betPoolSubject")[0].value = subjectSplit[1];
+								}
+								//只有四個選項
+								else if(i-1 < 5)
+								{
+									var optionSplit = json[i].split("|");
+									$("#betPoolOptionID_"+(i-1))[0].innerText = optionSplit[0];
+									$("#betPoolOption_"+(i-1))[0].value = optionSplit[1];
+									$("#betPoolOption_"+(i-1)).off("click");
+									$("#betPoolOption_"+(i-1)).on("click", function() {
+										privateBetting(this.id);
+									});
+								}
+							}
+						}
+						var parameter = "GetBetPool?ID="+id+"&Token="+token+"&SubjectID=0&NeedClose=Y";
+						azureAjax(parameter,callBack);
+					}
+					checkToken(afterCheck);
 				}
-				return false;
+			}
+			//獲取私人賭盤清單
+			function getBetPoolList(mode){
+				$("#CustomBetListContent")[0].innerText="";
+				function afterCheck(){
+					function callBack(json){
+						for(var i=0; i<json.length; i++)
+						{
+							//跳過說明
+							if(i == 0)
+								continue;
+								
+							var list = json[i].split("|");
+							var text =	'<div class="row justify-content-center">';
+							text+=			'<div class="col-12" style="cursor: pointer;" onclick="getBetPool(\''+list[0]+'\',this.innerText,\''+list[2]+'\',\''+mode+'\')">';
+							text+=				list[1];
+							text+=			'</div>';
+							text+=		'</div>';
+							$("#CustomBetListContent").append(text);
+						}
+					}
+					var parameter = "GetBetPoolList?ID="+id+"&Token="+token+"&Type="+mode;
+					azureAjax(parameter,callBack);
+				}
+				checkToken(afterCheck);
+			}
+			function getBetPool(subjectID, subjectText, canClose, mode){
+				//設定結算按鈕顯示
+				if(canClose == "Y")
+					$("#btnCloseBetPool").show();
+				else
+					$("#btnCloseBetPool").hide();
+				//需要下注
+				if(mode == "Now")
+					$("#betPoolMoney").show();
+				else
+					$("#betPoolMoney").hide();
+				//隱藏開盤按鈕
+				$("#btnCreateBetPool").hide();
+				$("#stopTime").hide();
+				
+				//設定項目
+				$("#betPoolID")[0].innerText = subjectID;
+				$("#betPoolSubject")[0].value = subjectText;
+				//取得選項
+				function afterCheck(){
+					function callBack(json){
+						//選項
+						for(var i=0; i<json.length; i++)
+						{
+							//跳過說明
+							if(i == 0)
+								continue;
+								
+							var optionSplit = json[i].split("|");
+							$("#betPoolOptionID_"+i)[0].innerText = optionSplit[0];
+							$("#betPoolOption_"+i)[0].value = optionSplit[1] + "(下注總額：" + optionSplit[2] + ")";
+							$("#betPoolOption_"+i).off("click");
+							if(mode == "Now")
+							{
+								$("#betPoolOption_"+i).on("click", function() {
+									privateBetting(this.id);
+								});
+							}
+						}
+					}
+					var parameter = "GetBetPool?ID="+id+"&Token="+token+"&SubjectID="+subjectID+"&NeedClose=N";
+					azureAjax(parameter,callBack);
+				}
+				checkToken(afterCheck);
+			}
+			//私人賭盤下注
+			function privateBetting(thisID){
+				subjectID = $("#betPoolID")[0].innerText;
+				optionID = $("#betPoolOptionID_"+thisID.split("_")[1])[0].innerText
+				//收盤
+				if(isCloseBetPool)
+				{
+					closeBetPool(subjectID,optionID);
+					isCloseBetPool = false;
+					return;
+				}
+				
+				var betMoney = $("#betPoolMoney")[0].value;
+				if(betMoney == 0)
+				{
+					$("#rtnMessage")[0].innerText = "請先放入現金。";
+					return false;
+				}
+				//取得選項
+				function afterCheck(){
+					function callBack(json){
+						$("#rtnMessage")[0].innerText = json[1];
+						var number = Number($("#money")[0].innerText)-Number(json[2]);
+						$("#money")[0].innerText = number;
+					}
+					var parameter = "PrivateBetting?ID="+id+"&Token="+token+"&SubjectID="+subjectID+"&OptionID="+optionID+"&Money="+betMoney;
+					azureAjax(parameter,callBack);
+				}
+				checkToken(afterCheck);
+			}
+			function createBetPool(){
+				if($("#stopTime")[0].value == "")
+				{
+					$("#rtnMessage")[0].innerText = "請輸入下注截止日。"
+					return;
+				}
+				function afterCheck(){
+					function callBack(json){
+						$("#rtnMessage")[0].innerText = json[1];
+					}
+					subject = $("#betPoolSubject")[0].value;
+					stopTime = $("#stopTime")[0].value;
+					optionIntro1 = $("#betPoolOption_1")[0].value;
+					optionIntro2 = $("#betPoolOption_2")[0].value;
+					optionIntro3 = $("#betPoolOption_3")[0].value;
+					optionIntro4 = $("#betPoolOption_4")[0].value;
+					var parameter = "CreateBetPool?ID="+id+"&Token="+token+"&Subject="+subject+"&StopTime="+stopTime;
+					parameter += "&OptionIntro1="+optionIntro1+"&OptionIntro2="+optionIntro2+"&OptionIntro3="+optionIntro3+"&OptionIntro4="+optionIntro4;
+					azureAjax(parameter,callBack);
+				}
+				checkToken(afterCheck);
+			}
+			//收盤
+			function closeBetPool(subjectID, optionID){
+				//取得選項
+				function afterCheck(){
+					function callBack(json){
+						$("#rtnMessage")[0].innerText = json[1];
+						//返回開盤狀態
+						$("#betPoolID")[0].innerText = "";
+						$("#betPoolSubject")[0].value = "";
+						for(var i=0; i<5; i++)
+						{
+							//沒有0號選項 跳過
+							if(i == 0)
+								continue;
+								
+							$("#betPoolOptionID_"+i)[0].innerText = "";
+							$("#betPoolOption_"+i)[0].value = "";
+						}
+						$("#btnCreateBetPool").show();
+						$("#stopTime").show();
+						$("#btnCloseBetPool").hide();
+						$("#betPoolMoney").hide();
+					}
+					var parameter = "CloseBetPool?ID="+id+"&Token="+token+"&SubjectID="+subjectID+"&OptionID="+optionID;
+					azureAjax(parameter,callBack);
+				}
+				checkToken(afterCheck);
+			}
+			//想提前收盤會用到
+			var isCloseBetPool = false;
+			function setCloseStatus(){
+				//不需要下注
+				$("#betPoolMoney").hide();
+				//隱藏按鈕
+				$("#btnCloseBetPool").hide();
+				$("#btnCreateBetPool").hide();
+				$("#stopTime").hide();
+				//設定狀態
+				isCloseBetPool = true;
+				
+				$("#rtnMessage")[0].innerText = "請點擊獲勝項目";
 			}
 		</script>
 	</head>
@@ -114,7 +329,7 @@
 					</div>
 				</div>
 				<!--中-->
-				<div id="BigSmall" class="col-8 px-3 bg-success h-100 d-flex flex-column rounded">
+				<div id="BigSmall" class="col-8 px-3 bg-success rounded">
 					<div class="row mt-1 justify-content-center">
 						<button class="col-3 btn btn-success border-red m-1" onclick="Betting('Big','0')">
 							<span style="display:block;font-size:24px;">大</span>
@@ -206,17 +421,54 @@
 							</button>
 						</div>
 					</div>
-					<div class="row justify-content-center align-items-center flex-grow-1">
-						<div class="col-2 text-end">
-							<label class="col-form-label">下注</label>
-						</div>
+					<div class="row mt-1 justify-content-center">
 						<div class="col-5">
-							<input type="number" class="form-control bg-dark text-white" id="betAmount" maxlength="10"/>
+							<input type="number" class="form-control bg-black text-white" id="betAmount" maxlength="10" placeholder="下注金額"/>
+						</div>
+					</div>
+				</div>
+				<div id="CustomBet" class="col-8 px-3">
+					<div class="row justify-content-center">
+						<div class="col-12">
+							<span id="betPoolID" style="display:none;"></span>
+							<textarea id="betPoolSubject" class="form-control bg-black text-white" rows="3"></textarea>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-6">
+							<span id="betPoolOptionID_1" style="display:none;"></span>
+							<textarea id="betPoolOption_1" class="form-control bg-black text-white" rows="2"></textarea>
+						</div>
+						<div class="col-6">
+							<span id="betPoolOptionID_2" style="display:none;"></span>
+							<textarea id="betPoolOption_2" class="form-control bg-black text-white" rows="2"></textarea>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-6">
+							<span id="betPoolOptionID_3" style="display:none;"></span>
+							<textarea id="betPoolOption_3" class="form-control bg-black text-white" rows="2"></textarea>
+						</div>
+						<div class="col-6">
+							<span id="betPoolOptionID_4" style="display:none;"></span>
+							<textarea id="betPoolOption_4" class="form-control bg-black text-white" rows="2"></textarea>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-5">
+							<input id="betPoolMoney" type="number" class="form-control bg-black text-white" maxlength="10" placeholder="下注金額"/>
+							<input id="stopTime" type="text" class="form-control bg-black text-white" maxlength="10" placeholder="下注截止日期(ex.1991/01/01)"/>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div class="col-5">
+							<button id="btnCreateBetPool" class="btn btn-success btn-sm" onclick="createBetPool()">開盤</button>
+							<button id="btnCloseBetPool" class="btn btn-success btn-sm" onclick="setCloseStatus()">提前結算</button>
 						</div>
 					</div>
 				</div>
 				<!--右-->
-				<div class="col-2 h-100 overflow-auto">
+				<div id="BigSmallRecord" class="col-2 h-100 overflow-auto">
 					<div class="row justify-content-center">
 						<div class="col-12">
 							<label class="col-form-label">記錄</label>
@@ -226,6 +478,20 @@
 					<div class="row justify-content-center">
 						<div class="col-12">
 							<label id="record"></label>
+						</div>
+					</div>
+				</div>
+				<div id="CustomBetList" class="col-2 h-100 overflow-auto">
+					<div class="row justify-content-center">
+						<div class="col-12">
+							<label class="col-form-label">項目清單</label>
+							<button class="btn btn-success btn-sm" onclick="getBetPoolList('Now')">更新</button>
+							<button class="btn btn-success btn-sm" onclick="getBetPoolList('History')">歷史</button>
+						</div>
+					</div>
+					<div class="row justify-content-center">
+						<div id="CustomBetListContent" class="col-12">
+						
 						</div>
 					</div>
 				</div>
@@ -277,9 +543,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		<div id="CustomBet" class="container-fluid" style="height:90%">
-				測試
 		</div>
 	</body>
 </html>
